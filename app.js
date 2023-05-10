@@ -1,7 +1,7 @@
 const { default: axios } = require('axios');
 const express = require('express');
-const url = require('url');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 
@@ -15,7 +15,6 @@ app.use(express.static('public'));
 // cors 설정
 app.use(cors());
 
-// NOTE process.env는 dotenv라이브러리 사용
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const AUTHORIZE_URI = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -68,12 +67,17 @@ app.get('/oauth2/redirect', async (req, res) => {
 
 app.get('/oauth2/accesstoken', async (req, res) => {
   const code = req.query.code;
-  const access_token = await getToken(code);
-  return res.send(access_token);
+  const accessToken = await getToken(code);
+  const userInfo = (await getUserInfo(accessToken)).data;
+  const webtoken = jwt.sign(
+    { email: userInfo.email, provider: 'google' },
+    process.env.JWT_SECRET
+  );
+  return res.send(webtoken);
 });
 
 app.get('/user/data', async (req, res) => {
-  const access_token = req.headers.authorization;
+  const jwt = req.headers.authorization;
 });
 
 app.listen(PORT, () => {

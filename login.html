@@ -27,7 +27,7 @@
         const res = await axios
           .get(`http://localhost:8080/oauth2/accesstoken?code=${code}`)
           .then((token) => {
-            window.sessionStorage.setItem('access_token', token.data);
+            window.sessionStorage.setItem('jwt', token.data);
           });
 
         window.location.href = 'http://localhost:8080';

@@ -26,7 +26,7 @@
       const login_btn = document.querySelector('.login');
       const pop_btn = document.querySelector('.pop');
 
-      if (window.sessionStorage.getItem('access_token')) {
+      if (window.sessionStorage.getItem('jwt')) {
         login_btn.classList.add('hide');
         pop_btn.classList.remove('hide');
       }
